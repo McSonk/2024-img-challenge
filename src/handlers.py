@@ -15,10 +15,18 @@ def file_exists(file_path):
     return exists
 
 class Handler:
-    def __init__(self, base_path):
-        self.tcia = TciaHandler(base_path)
-        logger.info('Using local directory: %s' % base_path)
+    def __init__(self):
+        self.df = pd.DataFrame(columns=['class', 'img', 'mask'])
     
+    def add_source(self, handler):
+        handler.read_df()
+        handler.remove_non_target()
+        handler.classify()
+        handler.build_paths()
+        handler.remove_not_found()
+
+        self.df = pd.concat([self.df, handler.get_result_df()], ignore_index=True)
+        logger.debug(self.df.info())
 
 class TciaHandler:
     def __init__(self, tcia_path, img_suffix, excel_file_name):
@@ -74,12 +82,9 @@ if __name__ == '__main__':
     TCIA_LOCATION = BASE_PATH + 'TCIA/'
     TCIA_EXCEL_NAME = 'HCC-TACE-Seg_clinical_data-V2.xlsx'
 
+    global_handler = Handler()
+
     logger.debug('Reading tcia...')
     tcia = TciaHandler(TCIA_LOCATION, TCIA_IMG_SUFFIX, TCIA_EXCEL_NAME)
-    tcia.read_df()
-    tcia.remove_non_target()
-    tcia.classify()
-    tcia.build_paths()
-    tcia.remove_not_found()
 
-    logger.debug(tcia.get_result_df().info())
+    global_handler.add_source(tcia)
