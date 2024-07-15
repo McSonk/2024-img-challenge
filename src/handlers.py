@@ -7,6 +7,20 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+BASE_PATH = '../Data/'
+# ...
+TCIA_IMG_SUFFIX = '_PV.nii.gz'
+TCIA_LOCATION = BASE_PATH + 'TCIA/'
+TCIA_EXCEL_NAME = 'HCC-TACE-Seg_clinical_data-V2.xlsx'
+# ...
+OP_LOCATION = BASE_PATH + 'OP/'
+NIFTI_PATH = 'OP_C+P_nifti'
+NNU_NET_PATH = 'OP_C+P_nnUnet'
+OP_EXCEL = 'OP_申請建模_1121110_20231223.xlsx'
+OP_IMG_SUFFIX = '_VENOUS_PHASE.nii.gz'
+OP_MASK_SUFFIX = '_VENOUS_PHASE_seg.nii.gz'
+OP_ID_COL_NAME = 'OP_C+P_Tumor識別碼'
+
 
 def file_exists(file_path):
     exists = os.path.exists(file_path)
@@ -79,9 +93,9 @@ class TciaHandler:
 class OpHandler:
     def __init__(self, op_path, nifti_dir_name, nnu_dir_name, img_suffix, mask_suffix, excel_file_name, id_col_name):
         self.LOCATION = op_path
-        self.NIFTI_PATH = OP_LOCATION + nifti_dir_name
-        self.NNU_NET_PATH = OP_LOCATION + nnu_dir_name
-        self.EXCEL = OP_LOCATION + excel_file_name
+        self.NIFTI_PATH = self.LOCATION + nifti_dir_name
+        self.NNU_NET_PATH = self.LOCATION + nnu_dir_name
+        self.EXCEL = self.LOCATION + excel_file_name
         self.IMG_SUFFIX = img_suffix
         self.MASK_SUFFIX = mask_suffix
         self.COL_NAME = id_col_name
@@ -94,7 +108,7 @@ class OpHandler:
         return os.path.join(self.NNU_NET_PATH, id + self.MASK_SUFFIX)
 
     def read_df(self):
-        logger.debug('reading file...')
+        logger.debug('reading file %s' % self.EXCEL)
         excel_df = pd.read_excel(self.EXCEL)
         self.df = excel_df[[self.COL_NAME, 'BCLC']]
         logger.info('%d rows in the excel file' % len(self.df))
@@ -134,20 +148,6 @@ class OpHandler:
 
 
 if __name__ == '__main__':
-    BASE_PATH = '../Data/'
-    # ...
-    TCIA_IMG_SUFFIX = '_PV.nii.gz'
-    TCIA_LOCATION = BASE_PATH + 'TCIA/'
-    TCIA_EXCEL_NAME = 'HCC-TACE-Seg_clinical_data-V2.xlsx'
-    # ...
-    OP_LOCATION = BASE_PATH + 'OP/'
-    NIFTI_PATH = 'OP_C+P_nifti'
-    NNU_NET_PATH = 'OP_C+P_nnUnet'
-    OP_EXCEL = 'OP_申請建模_1121110_20231223.xlsx'
-    OP_IMG_SUFFIX = '_VENOUS_PHASE.nii.gz'
-    OP_MASK_SUFFIX = '_VENOUS_PHASE_seg.nii.gz'
-    OP_ID_COL_NAME = 'OP_C+P_Tumor識別碼'
-
     global_handler = Handler()
 
     logger.debug('Reading tcia...')
