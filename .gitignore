@@ -1,4 +1,5 @@
 Data/*
 runs/*
 *.pyc
+tensor_training/*
 runs/Jul14_22-46-14_sonk-laptop/events.out.tfevents.1721018774.sonk-laptop.117075.0
