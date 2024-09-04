@@ -2,10 +2,7 @@ import logging
 import pandas as pd
 import os
 
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
-
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 BASE_PATH = '../Data/'
 # ...
@@ -148,6 +145,8 @@ class OpHandler:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+    logger.setLevel(logging.DEBUG)
     global_handler = Handler()
 
     logger.debug('Reading tcia...')
